@@ -1,4 +1,5 @@
-﻿using DesktopWindowSearchProvider;
+﻿using Common;
+using DesktopWindowSearchProvider;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,29 +20,26 @@ namespace WoxOpenWindows
         public List<Result> Query(Query query)
         {
 
-            List<Result> results = new List<Result>();
-            DesktopWindowSearch desktop = new DesktopWindowSearch();
+            List<IWindowSearchProvider> Providers = new List<IWindowSearchProvider>();
+
+            Providers.Add(new DesktopWindowSearch());
 
             string queryString = string.Empty;
             if (query.ActionParameters.Count > 0)
             {
                 queryString = query.ActionParameters.First();
             }
-            
-            foreach (var window in desktop.FindWindow(queryString).ToList())
-            {
-                results.Add(new Result()
-                {
-                    Title = window.WindowTitle,
-                    Action = e =>
-                    {
-                        window.SwitchToMe();
 
-                        return true;
-                    },
-                    SubTitle = window.WindowProcessName
-                });
+
+            var providerEnumerator = Providers.GetEnumerator();
+            providerEnumerator.MoveNext();
+
+            var results = providerEnumerator.Current.FindWindow(queryString);
+            while(providerEnumerator.MoveNext())
+            {
+                results.AddRange(providerEnumerator.Current.FindWindow(queryString));
             }
+
             return results;
         }
 

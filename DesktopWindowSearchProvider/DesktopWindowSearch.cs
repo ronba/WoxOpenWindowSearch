@@ -5,6 +5,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
+using Wox.Plugin;
 
 //Some code here taken from: Mike Corcoran
 //http://stackoverflow.com/questions/10819575/how-to-list-active-application-windows-using-c-sharp
@@ -18,21 +19,21 @@ namespace DesktopWindowSearchProvider
     public class DesktopWindowSearch : IWindowSearchProvider
     {
 
-        private List<DesktopWindow> windowList = new List<DesktopWindow>();
+        private List<Result> windowList = new List<Result>();
 
         public DesktopWindowSearch()
         {
             Initialize();
         }
 
-        public List<ISwitchableWindow> FindWindow(string titleSearchString)
+        public List<Result> FindWindow(string titleSearchString)
         {
-            List<ISwitchableWindow> output = new List<ISwitchableWindow>();
+            List<Result> output = new List<Result>();
             
-            foreach (ISwitchableWindow window in windowList)
+            foreach (Result window in windowList)
             {
-                bool processWindowTitleMatch= window.WindowTitle.ToLower().Contains(titleSearchString.ToLower());
-                bool processNameMatch = window.WindowProcessName.ToLower().Contains(titleSearchString.ToLower());
+                bool processWindowTitleMatch= window.Title.ToLower().Contains(titleSearchString.ToLower());
+                bool processNameMatch = window.SubTitle.ToLower().Contains(titleSearchString.ToLower());
                 if (processWindowTitleMatch || processNameMatch)
                 {
                     output.Add(window);
@@ -43,7 +44,7 @@ namespace DesktopWindowSearchProvider
                     {
                         Regex r = new Regex(titleSearchString, RegexOptions.IgnoreCase);
                         //string is sometimes not good enough for regex...
-                        if (r.IsMatch(window.WindowTitle))
+                        if (r.IsMatch(window.Title))
                         {
                             output.Add(window);
                         }
@@ -54,13 +55,7 @@ namespace DesktopWindowSearchProvider
                     }
                 }
             }
-
             return output;
-        }
-
-        public void SwitchToWindow(ISwitchableWindow Window)
-        {
-            Window.SwitchToMe();
         }
 
         public void Initialize()
@@ -89,15 +84,49 @@ namespace DesktopWindowSearchProvider
                 GetWindowText(hwnd, sb, sb.Capacity);
                 if (sb.Length > 0)
                 {
-                    windowList.Add(new DesktopWindow()
+                    var p = Win32APIWindowCallsProviders.GetProcessObjectFromHandle(hwnd);
+                    Wox.Plugin.Result result = new Wox.Plugin.Result()
                     {
-                        Handle = hwnd,
-                        WindowTitle = sb.ToString(),
-                        WindowProcessName = Win32APIWindowCallsProviders.GetEXENameFromWindowHandle(hwnd)
-                    });
+                        Action = e =>
+                        {
+                            SwitchToWindow(hwnd);
+                            return true;
+                        }, 
+                        Title = sb.ToString(),
+                        SubTitle = p.ProcessName + ".exe - " + p.Id
+                    };
+
+                    try {
+                        result.IcoPath = p.Modules != null && p.Modules.Count > 0 ? p.Modules[0].FileName : "";
+                    }
+                    catch
+                    {
+                        //if we're here - it means we won't be able to switch to this process ! 
+                        //it's running in a higher level context! let's assign it a super low priority
+                        //also add a caption
+                        result.Score = -1000;
+                        result.IcoPath = string.Empty;
+                        result.SubTitle += " < Process is running in a higher security context - Consider running Wox as Administrator >";
+                    }
+                    windowList.Add(result);
                 }
             }
             return true;
+        }
+
+        public void SwitchToWindow(int Handle)
+        {
+            Win32APIWindowCallsProviders.SetActiveWindow(Handle);
+            Win32APIWindowCallsProviders.ShowWindow(Handle, (int)Win32APIWindowCallsProviders.SW_SHOW); //SW_SHOW
+            var placement = Win32APIWindowCallsProviders.GetPlacement(Handle);
+
+            //Check if the window is minimized
+            if (placement.showCmd == Win32APIWindowCallsProviders.SW_SHOWMINIMIZED)
+            {
+                Win32APIWindowCallsProviders.ShowWindow(Handle, (int)Win32APIWindowCallsProviders.SW_RESTORE); //SW_RESTORE
+            }
+            Win32APIWindowCallsProviders.SetForegroundWindow(Handle);
+
         }
     }
 }

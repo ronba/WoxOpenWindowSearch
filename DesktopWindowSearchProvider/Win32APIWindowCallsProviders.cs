@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -121,7 +122,7 @@ namespace DesktopWindowSearchProvider
         static extern int GetModuleFileNameEx(IntPtr hProcess, IntPtr hModule, StringBuilder lpFilename, int nSize);
 
 
-        public static string GetEXENameFromWindowHandle(int Handle)
+        public static Process GetProcessObjectFromHandle(int Handle)
         {
             uint processID = 0;
             uint threadID = GetWindowThreadProcessId((IntPtr)Handle, out processID);
@@ -130,7 +131,7 @@ namespace DesktopWindowSearchProvider
             StringBuilder exePath = new StringBuilder(1024);
             int exePathLen = GetModuleFileNameEx((IntPtr)processID, new IntPtr(0), exePath, exePath.Capacity);
             */
-            return System.Diagnostics.Process.GetProcessById((int)processID).ProcessName + ".exe - " + processID;
+            return System.Diagnostics.Process.GetProcessById((int)processID);
         }
 
     }

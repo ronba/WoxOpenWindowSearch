@@ -10,16 +10,7 @@ namespace WindowSwitcherTester
     {
         static void Main(string[] args)
         {
-            if (args.Length > 0)
-            {
-                var desktop = new DesktopWindowSearchProvider.DesktopWindowSearch();
-                var a = desktop.FindWindow(args[0]);
 
-                foreach (var window in a)
-                {
-                    window.SwitchToMe();
-                }
-            }           
         }
     }
 }

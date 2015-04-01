@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading;
+using Wox.Plugin;
 
 namespace Common
 {
     public interface IWindowSearchProvider
     {
-        List<ISwitchableWindow> FindWindow(string titleSearchString);
+        List<Result> FindWindow(string titleSearchString);
     }
 }
