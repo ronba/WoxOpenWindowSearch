@@ -1,0 +1,13 @@
+﻿{
+  "ID":"d88ceca712bd4fdf89626d19bd981354",   //Plugin ID，32 bit UUID
+  "ActionKeyword":"fw",                     //Plugin default action keyword
+  "Name":"Find Open Window",                              //Plugin name
+  "Description":"Finds open windows, supports tabbed interfaces in IE/chrome.",    //Plugin description
+  "Author":"ronba",                     //Plugin Author
+  "Version":"0.0.1",                         //Plugin version，must be x.x.x format
+  "Language":"csharp",                       //Plugin language，we support csharp,python and executable now
+  "Website":"http://www.getwox.com",         //Plugin website or author website
+  "IcoPath": "Images\\pic.png",              //Plugin icon, relative path to the pluign folder
+  "ExecuteFileName":"WoxOpenWindows.dll"   //Execution entry. Dll name for c# plugin, and python file for python plugin
+}
+ 
