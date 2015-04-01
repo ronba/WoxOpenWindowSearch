@@ -28,11 +28,12 @@ namespace DesktopWindowSearchProvider
         public List<ISwitchableWindow> FindWindow(string titleSearchString)
         {
             List<ISwitchableWindow> output = new List<ISwitchableWindow>();
-            foreach(ISwitchableWindow window in windowList)
+            
+            foreach (ISwitchableWindow window in windowList)
             {
-                //If we have a direct match go ahead and add
-                //lets disregard capital letters here
-                if (window.WindowTitle.ToLower().Contains(titleSearchString.ToLower()))
+                bool processWindowTitleMatch= window.WindowTitle.ToLower().Contains(titleSearchString.ToLower());
+                bool processNameMatch = window.WindowProcessName.ToLower().Contains(titleSearchString.ToLower());
+                if (processWindowTitleMatch || processNameMatch)
                 {
                     output.Add(window);
                 }
@@ -42,7 +43,8 @@ namespace DesktopWindowSearchProvider
                     {
                         Regex r = new Regex(titleSearchString, RegexOptions.IgnoreCase);
                         //string is sometimes not good enough for regex...
-                        if (r.IsMatch(window.WindowTitle)) {
+                        if (r.IsMatch(window.WindowTitle))
+                        {
                             output.Add(window);
                         }
                     }
@@ -90,13 +92,10 @@ namespace DesktopWindowSearchProvider
                     windowList.Add(new DesktopWindow()
                     {
                         Handle = hwnd,
-                        WindowTitle = sb.ToString()
+                        WindowTitle = sb.ToString(),
+                        WindowProcessName = Win32APIWindowCallsProviders.GetEXENameFromWindowHandle(hwnd)
                     });
-                    
                 }
-
-                
-                
             }
             return true;
         }

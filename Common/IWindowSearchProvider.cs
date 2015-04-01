@@ -8,8 +8,6 @@ namespace Common
 {
     public interface IWindowSearchProvider
     {
-        void SwitchToWindow(ISwitchableWindow Window);
         List<ISwitchableWindow> FindWindow(string titleSearchString);
-        
     }
 }

@@ -1,5 +1,5 @@
 # WoxOpenWindowSearch
-This is a Wox Launcher plugin which is used to search across multiple windows.
+This is a Wox Launcher plugin which is used to search across multiple windows and switch to the window selected.
 
 Basically, we have too many windows, so why not search using the title?
 

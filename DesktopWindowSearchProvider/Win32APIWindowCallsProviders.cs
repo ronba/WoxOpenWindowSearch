@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -110,5 +111,27 @@ namespace DesktopWindowSearchProvider
                 return null;
             }
         }
+
+        //Retrieve the EXE name
+        //code taken from: https://social.msdn.microsoft.com/Forums/en-US/d20f15eb-2a22-4634-bf14-e76ab2ca2259/get-exe-name-from-a-window-handle?forum=windowsmobiledev
+        [DllImport("user32.dll", SetLastError = true)]
+        static extern uint GetWindowThreadProcessId(IntPtr hWnd, out uint lpdwProcessId);
+
+        [DllImport("psapi.dll", SetLastError = true)]
+        static extern int GetModuleFileNameEx(IntPtr hProcess, IntPtr hModule, StringBuilder lpFilename, int nSize);
+
+
+        public static string GetEXENameFromWindowHandle(int Handle)
+        {
+            uint processID = 0;
+            uint threadID = GetWindowThreadProcessId((IntPtr)Handle, out processID);
+
+            /*
+            StringBuilder exePath = new StringBuilder(1024);
+            int exePathLen = GetModuleFileNameEx((IntPtr)processID, new IntPtr(0), exePath, exePath.Capacity);
+            */
+            return System.Diagnostics.Process.GetProcessById((int)processID).ProcessName + ".exe - " + processID;
+        }
+
     }
 }

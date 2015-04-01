@@ -38,7 +38,8 @@ namespace WoxOpenWindows
                         window.SwitchToMe();
 
                         return true;
-                    }
+                    },
+                    SubTitle = window.WindowProcessName
                 });
             }
             return results;
