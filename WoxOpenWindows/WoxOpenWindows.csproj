@@ -62,6 +62,11 @@
       <Name>DesktopWindowSearchProvider</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="window-3-512.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -file "$(ProjectDir)Create-WoxPlugin.ps1" -outputDir "$(TargetDir)</PostBuildEvent>

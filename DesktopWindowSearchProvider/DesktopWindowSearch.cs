@@ -85,19 +85,20 @@ namespace DesktopWindowSearchProvider
                 if (sb.Length > 0)
                 {
                     var p = Win32APIWindowCallsProviders.GetProcessObjectFromHandle(hwnd);
-                    Wox.Plugin.Result result = new Wox.Plugin.Result()
+                    Result result = new Result()
                     {
                         Action = e =>
                         {
                             SwitchToWindow(hwnd);
                             return true;
-                        }, 
+                        },
                         Title = sb.ToString(),
                         SubTitle = p.ProcessName + ".exe - " + p.Id
                     };
 
+                    //This thing takes a LOT of time...
                     try {
-                        result.IcoPath = p.Modules != null && p.Modules.Count > 0 ? p.Modules[0].FileName : "";
+                        result.IcoPath = p.Modules[0].FileName;
                     }
                     catch
                     {
