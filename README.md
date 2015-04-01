@@ -3,7 +3,7 @@ This is a Wox Launcher plugin which is used to search across multiple windows.
 
 Basically, we have too many windows, so why not search using the title?
 
-Initial build is already working but is ugly :).
+Initial build is already working but is ugly.
 
 ## What I want to add
 Searching IE/Chrome/FireFox tabs
