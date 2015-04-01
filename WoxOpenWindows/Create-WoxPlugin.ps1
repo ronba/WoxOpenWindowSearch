@@ -8,3 +8,4 @@ $woxPluginWoxLocation = "$woxPluginLocation.wox"
 
 Get-ChildItem -Path $outputDir -Exclude "*.zip","*.wox" | `
 	Compress-Archive -DestinationPath $woxPluginZipLocation -Verbose -Force; mv $woxPluginZipLocation $woxPluginWoxLocation -Force -verbose
+Copy-Item $woxPluginWoxLocation ../../../ -verbose
