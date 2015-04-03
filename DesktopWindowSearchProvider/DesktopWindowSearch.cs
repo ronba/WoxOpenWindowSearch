@@ -32,10 +32,12 @@ namespace DesktopWindowSearchProvider
             
             foreach (Result window in windowList)
             {
+                bool isMatch = false;
                 bool processWindowTitleMatch= window.Title.ToLower().Contains(titleSearchString.ToLower());
                 bool processNameMatch = window.SubTitle.ToLower().Contains(titleSearchString.ToLower());
                 if (processWindowTitleMatch || processNameMatch)
                 {
+                    isMatch = true;
                     output.Add(window);
                 }
                 else
@@ -46,6 +48,7 @@ namespace DesktopWindowSearchProvider
                         //string is sometimes not good enough for regex...
                         if (r.IsMatch(window.Title))
                         {
+                            isMatch = true;
                             output.Add(window);
                         }
                     }
@@ -54,6 +57,7 @@ namespace DesktopWindowSearchProvider
                         //go to the next one, nothing to see here.
                     }
                 }
+
             }
             return output;
         }
@@ -98,7 +102,7 @@ namespace DesktopWindowSearchProvider
 
                     //This thing takes a LOT of time...
                     try {
-                        result.IcoPath = p.Modules[0].FileName;
+                        //result.IcoPath = p.Modules[0].FileName;
                     }
                     catch
                     {
